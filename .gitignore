@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.lnk
+
+# Generated data and tensors
+*.pkl
+*.pt
+*.pth
+
+# Generated model and adapter artifacts
+distilled_student_model/
+concept_lora_output/
+qwen_distilled_lora/
+qwen_text_distilled_lora/
+qwen_isolated_distilled_lora/
+qwen_half_text_lora/
+qwen_half_isolated_lora/
+gemma_distilled_lora/
+
+# Common model weights
+*.bin
+*.safetensors
+*.gguf
+
