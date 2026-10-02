@@ -16,7 +16,7 @@ Concept Forge は、大規模言語モデルの意味空間にある「概念の
 
 ```bash
 python -m venv .venv
-.venv\Scripts\activate
+./.venv/Scripts/Activate.ps1
 pip install -r requirements.txt
 python concept_forge_webui.py
 ```
