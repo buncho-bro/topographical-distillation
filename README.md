@@ -2,6 +2,8 @@
 
 Concept Forge は、大規模言語モデルの意味空間にある「概念の地形」を、より小さなモデルへ LoRA で蒸留するための Gradio アプリ兼研究プロジェクトです。
 
+このリポジトリはツール本体だけでなく、LLM Topography を探究した過程も保存しています。最終的なコアツール、主要な研究手法、従来方式が失敗した理由を確認できる研究アーカイブの3層で構成されています。
+
 ## すぐに使う
 
 ### Windows（推奨）
@@ -53,25 +55,33 @@ concept-forge/
 
 ## 各ファイルの役割
 
-### コアアプリ
+### 🚀 コアアプリ
 
-- `concept_forge_webui.py`: 蒸留、比較、チャットを操作するメインの Gradio アプリ
+- `concept_forge_webui.py`: VRAM効率を意識したメインのGradioアプリ。概念地形の抽出、蒸留、比較、チャットを操作
 - `requirements.txt`: コアアプリに必要な依存パッケージ
 - `start_concept_forge.bat`: Windows用ワンクリック起動ファイル
 
-### ドキュメント
+### 📖 ドキュメント
 
 - `README.md`: セットアップ、研究の概要、プロジェクト案内
 - `evidence_report.md`: 公開用の検証結果と評価指標
 
-### Research Archive
+### 🔬 Research Archive
 
-- `generate_evidence.py`: Concept Forge の LoRA を評価し、証明レポートを生成
-- `step4_advanced_benchmark.py`: 高度な類推・階層ベンチマーク
-- `step9_isolated_concept_distillation.py`: 単語単独抽出による純粋蒸留のCUI版
-- `step10_hybrid_chimera.py`: テキストLoRAと概念LoRAのマージ実験
-- `step11_frankenstein_surgery.py`: レイヤー単位のLoRA合成実験
-- `graveyard/`: 失敗・旧方式を含む実験過程の保存場所
+- `generate_evidence.py`: Concept Forge のLoRAを評価し、証明レポートを生成
+- `step4_advanced_benchmark.py`: Pairwise Cosine Similarityを用いた類推・階層ベンチマーク
+- `step9_isolated_concept_distillation.py`: 非線形プロジェクターを使わず、単語単独抽出で行う純粋蒸留のCUI版
+- `step10_hybrid_chimera.py`: Text LoRAとConcept LoRAを組み合わせるハイブリッド実験
+- `step11_frankenstein_surgery.py`: `.safetensors` をレイヤー単位で合成するLoRA外科手術実験
+
+### 💀 Graveyard of Failed Ideas
+
+`research_archive/graveyard/` は本番利用向けではありません。失敗・旧方式を、なぜ従来のマッピングが機能しなかったかを追跡できる研究記録として残しています。
+
+- `step2_distill.py`: 線形プロジェクターがアンカー点を過学習する問題を検証
+- `step5_zero_shot_injection.py` / `step6_translator_injection.py`: 異なる次元間のSVD・Translator方式を検証
+- `step7_same_dim_chimera.py`: MSEによる空間平滑化とHierarchy低下を検証
+- `step8_verify_teacher_extraction.py`: 単語単独抽出と文脈内抽出を比較し、文脈化によるHierarchy平坦化を検証
 
 ## 公開対象
 
