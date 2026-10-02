@@ -1,84 +1,23 @@
-# Topographical Distillation
+📁 Repository Structure & The Journey to the Truth
 
-巨大な言語モデルが持つ意味空間の「地形」を、より小さな言語モデルへ移すための実験プロジェクトです。文章生成を模倣する通常の蒸留に加え、隠れ表現や概念間のコサイン類似度を直接合わせる方法を検証しています。
+This repository is not just a tool; it is a chronological archive of our research into Large Language Model Topography. We have divided the scripts into the Final Tools, the Research Architectures, and the Graveyard of Failed Ideas (which serve as mathematical proofs of why traditional methods fail).
 
-## 主な結果
+🌟 Core Tools (The Final Solution)
 
-初期実験では `paraphrase-multilingual-MiniLM-L12-v2` を教師、`rinna/japanese-gpt2-xsmall` を生徒として、1,000件のテキストで学習しました。独自の意味類似度ベンチマークにおける Spearman 相関は次のように変化しました。
+These are the production-ready tools derived from our final conclusions.
 
-| モデル | スコア |
-| --- | ---: |
-| Teacher | 0.7173 |
-| Student（蒸留前） | 0.2796 |
-| Student（蒸留後） | 0.4985 |
+concept_forge_webui.py The Ultimate Topography Distiller (Web UI). The culmination of our research. A VRAM-efficient, Gradio-based application that allows anyone to extract pure conceptual topography from massive Teacher models (e.g., 32B/70B) and distill it into tiny Student models (e.g., 0.5B/1.5B) using Isolated Concept Distillation.
+step12_generate_evidence.py The Evidence Builder. An automated script that generates the evidence_report.md. It proves mathematically that Contextual Embeddings flatten hierarchy and that Isolated Concept Distillation successfully clones the Teacher's depth.
+🔬 The Research Architectures (Experiments & Surgery)
+step4_advanced_benchmark.py The Topography Evaluator. Our custom evaluation metric that calculates the Analogy (Linear Reasoning / Vector Arithmetic) and Hierarchy (Non-linear Concept Depth) scores using Pairwise Cosine Similarity.
+step8_verify_teacher_extraction.py The Trap of Contextualization. A verification script that compares vectors extracted from single words vs. words embedded in sentences. It proved our greatest discovery: Context flattens hierarchy due to Attention mechanism noise.
+step9_isolated_concept_distillation.py Isolated Concept Distillation (Raw Script). The foundational script that performs Pairwise Distillation using 100% pure isolated words without any non-linear projectors.
+step10_hybrid_chimera.py Mixture of LoRAs (MoE-LoRA). An experimental script that merges a Text-Distilled LoRA (Analogy Specialist) and an Isolated-Concept LoRA (Hierarchy Specialist) into a single Hybrid AI.
+step11_frankenstein_surgery.py Layer-wise LoRA Surgery. A highly advanced script that mathematically dissects .safetensors files to apply Concept LoRAs only to the lower (thinking) layers and Text LoRAs to the upper (output) layers.
+💀 The Graveyard of Failed Ideas (Proofs of Failure)
 
-追加の Qwen 実験では、文脈内ではなく単語を単独で入力して概念表現を抽出し、ペアごとのコサイン類似度行列を LoRA で合わせる方法を検証しました。
+Do not use these for production. They remain here as empirical evidence of why traditional mapping fails.
 
-| モデル / 条件 | Analogy | Hierarchy |
-| --- | ---: | ---: |
-| Qwen2.5-7B Teacher（単語単独） | 0.6644 | 0.2148 |
-| Qwen2.5-1.5B-Instruct Base | 0.7715 | 0.0937 |
-| Concept-distilled Student | 0.6563 | 0.2280 |
-
-これらは小規模な独自ベンチマーク上の探索的結果です。一般的な推論能力や他のタスクへの改善を保証するものではありません。再現性と外部ベンチマークでの検証が今後の課題です。
-
-## ファイル構成
-
-- `run_experiment.py`: 初期の地形蒸留実験
-- `step0_generate_target_data.py` ～ `step12_generate_evidence.py`: Qwenを使った段階的な実験
-- `concept_forge_webui.py`: 蒸留と比較を行うGradio UI
-- `experiment_report.md`: 初期実験の詳細レポート
-- `evidence_report.md`: 単語単独抽出とLoRA蒸留の結果
-- `experiment_results.json`: 初期実験の機械可読な結果
-
-## セットアップ
-
-Python 3.10以降と、CUDA対応GPUを推奨します。
-
-```bash
-python -m venv .venv
-pip install -r requirements.txt
-```
-
-4-bit量子化を使うスクリプトは、CUDA環境と対応する `bitsandbytes` が必要です。Hugging Face上のモデルは初回実行時にダウンロードされます。モデルごとの利用条件にも従ってください。
-
-## 実行例
-
-初期実験:
-
-```bash
-python run_experiment.py
-```
-
-Qwenによるターゲットデータ生成、教師表現の抽出、蒸留:
-
-```bash
-python step0_generate_target_data.py
-python step1_extract.py
-python step2_distill.py
-```
-
-単語単独での概念蒸留と評価:
-
-```bash
-python step9_isolated_concept_distillation.py
-python step12_generate_evidence.py
-```
-
-Web UI:
-
-```bash
-python concept_forge_webui.py
-```
-
-一部のスクリプトはローカルのデータファイルや、それ以前のステップで生成した成果物を前提とします。パスとモデルIDは各スクリプト冒頭の設定で変更できます。
-
-## 公開対象について
-
-このリポジトリには再現用コードと評価結果を収録しています。生成されたモデル重み、LoRAアダプター、抽出テンソル、キャッシュデータは容量が大きいため含めていません。
-
-## レポート
-
-- [初期実験レポート](experiment_report.md)
-- [追加検証レポート](evidence_report.md)
-
+step2_distill.py The Projector Overfitting Trap. Attempts to match absolute coordinates using an nn.Linear projector. Result: The projector achieves a Loss of 0.0000 by "memorizing" anchor points, completely destroying the topology for unknown words.
+step5_zero_shot_injection.py & step6_translator_injection.py The Dimensional Catastrophe. Attempts to map a 1536-dim Student space to a 4096-dim Teacher space using SVD Procrustes alignment and frozen Translators. Result: Severe "mojibake" (catastrophic forgetting) of semantic placement.
+step7_same_dim_chimera.py The Linear Smoothing Trap. Attempts to map spaces of the same dimension (1536 -> 1536) using MSE Loss. Result: The MSE forces the space to "iron out", resulting in artificially high Analogy but completely flattened Hierarchy.
