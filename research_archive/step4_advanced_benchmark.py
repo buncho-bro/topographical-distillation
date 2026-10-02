@@ -9,9 +9,10 @@ from peft import PeftModel
 # --- 設定 ---
 TEACHER_MODEL_ID = "Qwen/Qwen2.5-7B"
 STUDENT_MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-TOPO_LORA_DIR = os.path.join(BASE_DIR, "qwen_distilled_lora")
-TEXT_LORA_DIR = os.path.join(BASE_DIR, "qwen_text_distilled_lora")
+ARCHIVE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(ARCHIVE_DIR)
+TOPO_LORA_DIR = os.path.join(PROJECT_ROOT, "qwen_distilled_lora")
+TEXT_LORA_DIR = os.path.join(PROJECT_ROOT, "qwen_text_distilled_lora")
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

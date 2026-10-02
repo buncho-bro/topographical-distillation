@@ -12,7 +12,8 @@ from peft import LoraConfig, get_peft_model
 TEACHER_MODEL_ID = "Qwen/Qwen2.5-7B"
 STUDENT_MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ARCHIVE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(ARCHIVE_DIR)
 
 # --- ベンチマークテストセット（これらは学習データから厳密に除外） ---
 analogy_tests = [("王様", "男", "女", "女王"), ("東京", "日本", "フランス", "パリ"), ("医者", "病院", "学校", "教師"), ("車", "道路", "線路", "電車"), ("昼", "太陽", "夜", "月")]
@@ -181,7 +182,7 @@ def step9_isolated_concept_distillation():
     print("==================================================")
     
     # 💡ハイブリッド用にLoRAパーツを保存！
-    save_path = os.path.join(BASE_DIR, "qwen_isolated_distilled_lora")
+    save_path = os.path.join(PROJECT_ROOT, "qwen_isolated_distilled_lora")
     student.save_pretrained(save_path)
     print(f"\n[Saved] Isolated Concept LoRA saved to: {save_path}")
 

@@ -1,18 +1,29 @@
-# Topographical Distillation
+# Concept Forge
 
-巨大な言語モデルが持つ意味空間の「地形」を、より小さな言語モデルへ移すための実験プロジェクトです。文章生成を模倣する通常の蒸留に加え、隠れ表現や概念間のコサイン類似度を直接合わせる方法を検証しています。
+Concept Forge は、大規模言語モデルの意味空間にある「概念の地形」を、より小さなモデルへ LoRA で蒸留するための Gradio アプリ兼研究プロジェクトです。
 
-## 主な結果
+## すぐに使う
 
-初期実験では `paraphrase-multilingual-MiniLM-L12-v2` を教師、`rinna/japanese-gpt2-xsmall` を生徒として、1,000件のテキストで学習しました。独自の意味類似度ベンチマークにおける Spearman 相関は次のように変化しました。
+### Windows（推奨）
 
-| モデル | スコア |
-| --- | ---: |
-| Teacher | 0.7173 |
-| Student（蒸留前） | 0.2796 |
-| Student（蒸留後） | 0.4985 |
+1. Python 3.10 以降と CUDA 対応環境を用意します。
+2. `start_concept_forge.bat` をダブルクリックします。
+3. 初回は仮想環境の作成と依存パッケージの導入後、Web UI が起動します。
 
-追加の Qwen 実験では、文脈内ではなく単語を単独で入力して概念表現を抽出し、ペアごとのコサイン類似度行列を LoRA で合わせる方法を検証しました。
+### 手動起動
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+python concept_forge_webui.py
+```
+
+4-bit 量子化には、CUDA と環境に対応した `bitsandbytes` が必要です。Hugging Face のモデルは初回実行時にダウンロードされるため、各モデルの利用条件にも従ってください。
+
+## 研究の結論
+
+単語を文中から取り出すのではなく、単独で教師モデルへ入力して概念表現を抽出し、概念間のペアワイズ・コサイン類似度を小さなモデルへ蒸留する方法を検証しました。
 
 | モデル / 条件 | Analogy | Hierarchy |
 | --- | ---: | ---: |
@@ -20,65 +31,48 @@
 | Qwen2.5-1.5B-Instruct Base | 0.7715 | 0.0937 |
 | Concept-distilled Student | 0.6563 | 0.2280 |
 
-これらは小規模な独自ベンチマーク上の探索的結果です。一般的な推論能力や他のタスクへの改善を保証するものではありません。再現性と外部ベンチマークでの検証が今後の課題です。
+小規模な独自ベンチマークでは、蒸留後の Student の階層スコアが Teacher と同等以上になりました。ただし、これは探索的な結果であり、一般的な推論能力や他タスクへの改善を保証するものではありません。詳しい条件と数値は [evidence_report.md](evidence_report.md) を参照してください。
 
-## ファイル構成
+## プロジェクト構成
 
-- `run_experiment.py`: 初期の地形蒸留実験
-- `step0_generate_target_data.py` ～ `step12_generate_evidence.py`: Qwenを使った段階的な実験
-- `concept_forge_webui.py`: 蒸留と比較を行うGradio UI
-- `experiment_report.md`: 初期実験の詳細レポート
-- `evidence_report.md`: 単語単独抽出とLoRA蒸留の結果
-- `experiment_results.json`: 初期実験の機械可読な結果
-
-## セットアップ
-
-Python 3.10以降と、CUDA対応GPUを推奨します。
-
-```bash
-python -m venv .venv
-pip install -r requirements.txt
+```text
+concept-forge/
+├─ concept_forge_webui.py
+├─ requirements.txt
+├─ start_concept_forge.bat
+├─ README.md
+├─ evidence_report.md
+└─ research_archive/
+   ├─ generate_evidence.py
+   ├─ step4_advanced_benchmark.py
+   ├─ step9_isolated_concept_distillation.py
+   ├─ step10_hybrid_chimera.py
+   ├─ step11_frankenstein_surgery.py
+   └─ graveyard/
 ```
 
-4-bit量子化を使うスクリプトは、CUDA環境と対応する `bitsandbytes` が必要です。Hugging Face上のモデルは初回実行時にダウンロードされます。モデルごとの利用条件にも従ってください。
+## 各ファイルの役割
 
-## 実行例
+### コアアプリ
 
-初期実験:
+- `concept_forge_webui.py`: 蒸留、比較、チャットを操作するメインの Gradio アプリ
+- `requirements.txt`: コアアプリに必要な依存パッケージ
+- `start_concept_forge.bat`: Windows用ワンクリック起動ファイル
 
-```bash
-python run_experiment.py
-```
+### ドキュメント
 
-Qwenによるターゲットデータ生成、教師表現の抽出、蒸留:
+- `README.md`: セットアップ、研究の概要、プロジェクト案内
+- `evidence_report.md`: 公開用の検証結果と評価指標
 
-```bash
-python step0_generate_target_data.py
-python step1_extract.py
-python step2_distill.py
-```
+### Research Archive
 
-単語単独での概念蒸留と評価:
+- `generate_evidence.py`: Concept Forge の LoRA を評価し、証明レポートを生成
+- `step4_advanced_benchmark.py`: 高度な類推・階層ベンチマーク
+- `step9_isolated_concept_distillation.py`: 単語単独抽出による純粋蒸留のCUI版
+- `step10_hybrid_chimera.py`: テキストLoRAと概念LoRAのマージ実験
+- `step11_frankenstein_surgery.py`: レイヤー単位のLoRA合成実験
+- `graveyard/`: 失敗・旧方式を含む実験過程の保存場所
 
-```bash
-python step9_isolated_concept_distillation.py
-python step12_generate_evidence.py
-```
+## 公開対象
 
-Web UI:
-
-```bash
-python concept_forge_webui.py
-```
-
-一部のスクリプトはローカルのデータファイルや、それ以前のステップで生成した成果物を前提とします。パスとモデルIDは各スクリプト冒頭の設定で変更できます。
-
-## 公開対象について
-
-このリポジトリには再現用コードと評価結果を収録しています。生成されたモデル重み、LoRAアダプター、抽出テンソル、キャッシュデータは容量が大きいため含めていません。
-
-## レポート
-
-- [初期実験レポート](experiment_report.md)
-- [追加検証レポート](evidence_report.md)
-
+GitHubにはコードと評価レポートのみを収録しています。生成されたモデル重み、LoRAアダプター、抽出テンソル、キャッシュデータは容量が大きいため含めていません。

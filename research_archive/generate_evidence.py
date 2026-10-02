@@ -8,9 +8,10 @@ from peft import PeftModel
 # --- 設定 ---
 TEACHER_ID = "Qwen/Qwen2.5-7B"
 STUDENT_ID = "Qwen/Qwen2.5-1.5B-Instruct"
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-LORA_DIR = os.path.join(BASE_DIR, "concept_lora_output") # Concept Forgeで作成した保存先
-REPORT_PATH = os.path.join(BASE_DIR, "evidence_report.md")
+ARCHIVE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(ARCHIVE_DIR)
+LORA_DIR = os.path.join(PROJECT_ROOT, "concept_lora_output") # Concept Forgeで作成した保存先
+REPORT_PATH = os.path.join(PROJECT_ROOT, "evidence_report.md")
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
